@@ -1,154 +1,186 @@
-import {
-	addDoc,
-	collection,
-	deleteDoc,
-	doc,
-	getDocs,
-	query,
-	updateDoc,
-	where,
-} from "firebase/firestore";
 import { useState } from "react";
-import { auth, db } from "../Firebase";
+import firebaseApp from "../Firebase";
+import { getAuth } from "firebase/auth";
+import {
+  getFirestore,
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 // Hook
 export const useFirestore = () => {
-	const [data, setData] = useState([]);
-	const [error, setError] = useState();
-	const [loading, setLoading] = useState({});
+  const [error, setError] = useState();
+  const [loading, setLoading] = useState({});
 
-	// get data from firestore with query
-	const getData = async () => {
-		try {
-			setLoading((prev) => ({ ...prev, getData: true }));
+  // get data from firestore with query
+  const getData = async () => {
+    try {
+      setLoading((prev) => ({ ...prev, getData: true }));
 
-			const dataRef = collection(db, "users");
-			if (auth.currentUser) {
-				const filterQuery = query(
-					dataRef,
-					where("userUID", "==", auth.currentUser.uid)
-				);
-				const querySnapshot = await getDocs(filterQuery);
-				const dataDb = querySnapshot.docs.map((doc) => ({
-					id: doc.id,
-					...doc.data(),
-				}));
-				setData(dataDb);
-			} else {
-				const querySnapshot = await getDocs(dataRef);
-				const dataDb = querySnapshot.docs.map((doc) => ({
-					id: doc.id,
-					...doc.data(),
-				}));
-				setData(dataDb);
-			}
-		} catch (error) {
-			console.log(error);
-			setError(error.message);
-		} finally {
-			setLoading((prev) => ({ ...prev, getData: false }));
-		}
-	};
+      const dataRef = collection(db, "users");
+      if (auth.currentUser) {
+        const filterQuery = query(
+          dataRef,
+          where("userUID", "==", auth.currentUser.uid)
+        );
+        const querySnapshot = await getDocs(filterQuery);
+        const dataDb = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        return dataDb;
+      }
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    } finally {
+      setLoading((prev) => ({ ...prev, getData: false }));
+    }
+  };
+  // get data user whit id from firestore with query
+  const getDataUserId = async (userUID) => {
+    try {
+      setLoading((prev) => ({ ...prev, getDataUserId: true }));
 
-	// get data all users from firestore
-	const getDataUsers = async () => {
-		try {
-			setLoading((prev) => ({ ...prev, getDataUsers: true }));
+      const dataRef = collection(db, "users");
 
-			const dataRef = collection(db, "users");
-			// const filterQuery = query(
-			// 	dataRef,
-			// 	where("userUID", "==", auth.currentUser.uid)
-			// );
-			const querySnapshot = await getDocs(dataRef);
-			const dataDb = querySnapshot.docs.map((doc) => ({
-				id: doc.id,
-				...doc.data(),
-			}));
-			setData(dataDb);
-		} catch (error) {
-			console.log(error);
-			setError(error.message);
-		} finally {
-			setLoading((prev) => ({ ...prev, getDataUsers: false }));
-		}
-	};
+      const filterQuery = query(
+        dataRef,
+        where("userUID", "==", userUID)
+      );
+      const querySnapshot = await getDocs(filterQuery);
+      const dataDb = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      return dataDb;
 
-	//  add data to firestore
-	const addData = async (dataUser) => {
-		console.log("datauser", dataUser);
-		try {
-			setLoading((prev) => ({ ...prev, addData: true }));
-			const newDoc = {
-				name: dataUser.names,
-				lastName: dataUser.lastNames,
-				email: auth.currentUser.email,
-				phone: dataUser.phone,
-				role: "user",
-				userUID: auth.currentUser.uid,
-			};
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    } finally {
+      setLoading((prev) => ({ ...prev, getDataUserId: false }));
+    }
+  };
 
-			const dataRef = collection(db, "users");
+  // get data all users from firestore
+  const getDataUsers = async () => {
+    try {
+      setLoading((prev) => ({ ...prev, getDataUsers: true }));
 
-			await addDoc(dataRef, newDoc);
-			setData([...data, newDoc]);
-		} catch (error) {
-			console.log(error);
-			setError(error.message);
-		} finally {
-			setLoading((prev) => ({ ...prev, addData: false }));
-		}
-	};
+      const dataRef = collection(db, "users");
+      const querySnapshot = await getDocs(dataRef);
+      const dataDb = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      return dataDb;
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    } finally {
+      setLoading((prev) => ({ ...prev, getDataUsers: false }));
+    }
+  };
 
-	// update data to firestore
-	const updateData = async (dataUser) => {
-		try {
-			console.log(dataUser);
-			setLoading((prev) => ({ ...prev, updateData: true }));
-			const dataRef = doc(db, "users", dataUser.id);
-			const newData = {
-				name: dataUser.names,
-				lastName: dataUser.lastNames,
-				phone: dataUser.phone,
-				userUID: auth.currentUser.uid,
-			};
-			await updateDoc(dataRef, newData);
-			
-			setData((prev) =>
-				prev.map((item) => (item.id === dataUser.id ? newData : item))
-			);
-		} catch (error) {
-			console.log(error);
-			setError(error.message);
-		} finally {
-			setLoading((prev) => ({ ...prev, updateData: false }));
-		}
-	};
+  //  add data to firestore
+  const addData = async (dataUser) => {
+    try {
+      setLoading((prev) => ({ ...prev, addData: true }));
+      const newDoc = {
+        name: dataUser.name,
+        lastName: dataUser.lastName,
+        email: auth.currentUser.email,
+        phone: dataUser.phone,
+        role: "user",
+        userUID: auth.currentUser.uid,
+        profileImage: dataUser.profileImage,
+      };
 
-	// delete data to firestore
-	const deleteData = async (idUser) => {
-		try {
-			setLoading((prev) => ({ ...prev, [idUser]: true }));
-			const docRef = doc(db, "users", idUser);
-			await deleteDoc(docRef);
-			setData(data.filter((item) => item.id !== idUser));
-		} catch (error) {
-			console.log(error);
-			setError(error.message);
-		} finally {
-			setLoading((prev) => ({ ...prev, [idUser]: false }));
-		}
-	};
+      const dataRef = collection(db, "users");
 
-	// return data
-	return {
-		data,
-		error,
-		loading,
-		getData,
-		addData,
-		getDataUsers,
-		deleteData,
-		updateData,
-	};
+      await addDoc(dataRef, newDoc);
+      return newDoc;
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    } finally {
+      setLoading((prev) => ({ ...prev, addData: false }));
+    }
+  };
+
+  // update data to firestore
+  const updateData = async (dataUser) => {
+    try {
+      setLoading((prev) => ({ ...prev, updateData: true }));
+      const dataRef = doc(db, "users", dataUser.id);
+      await updateDoc(dataRef, dataUser);
+
+      return ((prev) =>
+        prev.map((item) => (item.id === dataUser.id ? dataUser : item))
+      );
+
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    } finally {
+      setLoading((prev) => ({ ...prev, updateData: false }));
+    }
+  };
+  // update Role to firestore
+  const updateRole = async (dataUser) => {
+    try {
+      setLoading((prev) => ({ ...prev, updateData: true }));
+      const dataRef = doc(db, "users", dataUser.id);
+      const newData = {
+        role: dataUser.role,
+      };
+      await updateDoc(dataRef, newData);
+
+      return ((prev) => {
+        return prev.map((item) => (item.id === dataUser.id ? newData : item));
+      });
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    } finally {
+      setLoading((prev) => ({ ...prev, updateData: false }));
+    }
+  };
+
+  // delete data to firestore
+  const deleteData = async (idUser) => {
+    try {
+      setLoading((prev) => ({ ...prev, [idUser]: true }));
+      const docRef = doc(db, "users", idUser);
+      await deleteDoc(docRef);
+      const data = await getData();
+      return data.filter((item) => item.id !== idUser);
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    } finally {
+      setLoading((prev) => ({ ...prev, [idUser]: false }));
+    }
+  };
+
+  // return data
+  return {    error,
+    loading,
+    getData,
+    getDataUserId,
+    addData,
+    getDataUsers,
+    deleteData,
+    updateData,
+    updateRole,
+  };
 };
