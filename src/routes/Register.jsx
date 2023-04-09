@@ -2,7 +2,7 @@
 import { useContext } from "react";
 import { UserContext } from "../context/UserProvider";
 import { useForm } from "react-hook-form";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import { FormValidate } from "../utils/FormValidate";
 
@@ -13,8 +13,9 @@ import { useFirestore } from "../hooks/useFirestore";
 
 // page register
 const Register = () => {
+	const navegate = useNavigate();
 	const { registerUser } = useContext(UserContext);
-	const { addData } = useFirestore();
+	const {addData } = useFirestore();
 	// validate form with react-hook-form
 	const {
 		required,
@@ -44,7 +45,7 @@ const Register = () => {
 				email: data.email,
 				profileImage: "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
 			});
-			window.location.href = "/profile";
+			navegate("/profile");
 		} catch (error) {
 			console.log(error.code);
 			const { code, message } = ErrorsFirebase(error.code);
@@ -60,18 +61,21 @@ const Register = () => {
 			<div className="max-w-md w-full space-y-8">
 				<div>
 					<img
-						className="mx-auto h-28 w-auto"
-						src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/image_resource%2Flogo_black.png?alt=media&token=865e49f6-bc1f-46ec-8e4e-923f503f0e96"
+						className="mx-auto h-12 w-auto"
+						src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
 						alt="Workflow"
 					/>
 					<h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
 						Registrate
 					</h2>
 					<p className="mt-2 text-center text-sm text-gray-600">
-						O{" "}
-						<NavLink to="/login">
-							<span className="font-medium text-amber-500 hover:text-amber-400">Iniciar sesión</span>
-						</NavLink>
+						Or{" "}
+						<a
+							href="#"
+							className="font-medium text-indigo-600 hover:text-indigo-500"
+						>
+							start your 14-day free trial
+						</a>
 					</p>
 				</div>
 				<form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
@@ -120,7 +124,7 @@ const Register = () => {
 					<div>
 						<button
 							type="submit"
-							className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-400 hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+							className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 						>
 							<span className="absolute left-0 inset-y-0 flex items-center pl-3">
 								{/* <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" /> */}

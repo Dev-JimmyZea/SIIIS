@@ -8,7 +8,7 @@ import Login from "./routes/Login";
 import Register from "./routes/Register";
 import Home from "./routes/Home";
 import NotFound from "./routes/NotFound";
-import Article from "./routes/Article";
+import Review from "./routes/Review";
 import Profile from "./routes/Profile";
 import Users from "./routes/Users";
 
@@ -19,65 +19,61 @@ import Footer from "./components/Footer";
 import RequireAuth from "./components/RequireAuth";
 import LayoutContainerForm from "./components/LayoutContainerForm";
 import RequireAuthAdmin from "./components/RequireAuthAdmin";
-import ForgotPassword from "./components/ForgotPassword";
 
 // page index
 const App = () => {
-  const { user } = useContext(UserContext);
+	const { user } = useContext(UserContext);
 
-  if (user === false) {
-    return (
-      <div className="text-center text-gray-500 text-xl font-bold h-screen">
-        Cargando...
-      </div>
-    );
-  }
+	if (user === false) {
+		return <div
+			className="text-center text-gray-500 text-xl font-bold h-screen"
+		>Cargando...</div>;
+	}
 
-  return (
-    <>
-      <Navbar />
+	return (
+		<>
+			<Navbar />
 
-      <Routes>
-        <Route element={<LayoutContainerForm />}>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-        </Route>
+			<Routes>
+				<Route element={<LayoutContainerForm />}>
+					<Route path="/register" element={<Register />} />
+					<Route path="/login" element={<Login />} />
+				</Route>
 
-        <Route path="/" element={<Home />} />
-        <Route
-          path="/Article"
-          element={
-            <RequireAuth>
-              <Article />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <RequireAuth>
-              <Profile />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/users"
-          element={
-            <RequireAuth>
-              <RequireAuthAdmin>
-                <Users />
-              </RequireAuthAdmin>
-            </RequireAuth>
-          }
-        />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+				<Route path="/" element={<Home />} />
+				<Route
+					path="/review"
+					element={
+						<RequireAuth>
+							<Review />
+						</RequireAuth>
+					}
+				/>
+				<Route
+					path="/profile"
+					element={
+						<RequireAuth>
+							<Profile />
+						</RequireAuth>
+					}
+				/>
+				<Route
+					path="/users"
+					element={
+						<RequireAuth>
+							<RequireAuthAdmin>
+								<Users />
+							</RequireAuthAdmin>
+						</RequireAuth>
+					}
+				/>
 
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+				<Route path="*" element={<NotFound />} />
+			</Routes>
 
-      <Footer />
-    </>
-  );
+			<Footer />
+		</>
+	);
 };
 
 export default App;

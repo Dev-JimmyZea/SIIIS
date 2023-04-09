@@ -1,21 +1,16 @@
 // import dependencies
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useFirestore } from "../hooks/useFirestore";
 
 const RequireAuthAdmin = ({ children }) => {
-	const { getData, loading } = useFirestore();
-	const [data, setData] = useState([]);
+	const { getData, loading, data } = useFirestore();
 
 	useEffect(() => {
-		const loadData = async () => {
-			const data = await getData();
-			console.log(data);
-			setData(data);
-		}
-		loadData();
+		getData();
 	}, []);
 
+	// if (loading.getData ) {
 	if (loading.getData || loading.getData === undefined) {
 		return <div
 			className="text-center text-gray-500 text-xl font-bold h-screen"

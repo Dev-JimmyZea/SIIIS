@@ -1,4 +1,4 @@
-import { useEffect, useState, useReducer } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useFirestore } from "../hooks/useFirestore";
 import { ErrorsFirebase } from "../utils/ErrorsFirebase";
@@ -6,63 +6,23 @@ import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import SelectRole from "../components/SelectRole";
 
 const Users = () => {
-  const { loading, getDataUsers, deleteData } = useFirestore();
-  const { setError } = useForm();
-  const [data, setData] = useState([]);
+  const { data, loading, getDataUsers, deleteData } =
+    useFirestore();
 
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case "filter":
-        return action.payload.data.filter((data) => {
-          return data.name.toLowerCase().includes(action.payload.filter.toLowerCase());
-        });
-      case "all":
-        return action.payload;
-      default:
-        return state;
-    }
-  }
-  const [state, dispatch] = useReducer(
-    reducer,
-    [],
-  );
-
+  const {
+    setError,
+  } = useForm();
 
   useEffect(() => {
-    const loadData = async () => {
-      const data = await getDataUsers();
-      dispatch({ type: "all", payload: data });
-      setData(data.sort((a, b) => {
-        if (a.role === "admin" && b.role !== "admin") {
-          return -1;
-        } else if (a.role !== "admin" && b.role === "admin") {
-          return 1;
-        } else {
-          return 0;
-        }
-      }));
-    }
-    loadData()
-
+    getDataUsers();
   }, []);
 
+  // if (loading.getDataUsers) {
   if (loading.getDataUsers || loading.getDataUsers === undefined) {
-    return (
-      <div className="text-center text-gray-500 text-xl font-bold h-screen">
-        Cargando...
-      </div>
-    );
-  }
 
-  const handleSearch = (e) => {
-    dispatch({ 
-      type: "filter",
-      payload: {
-        filter: e.target.value,
-        data: data
-      }
-    });
-
+    return <div
+      className="text-center text-gray-500 text-xl font-bold h-screen"
+    >Cargando...</div>;
   }
 
   const handleClickDelete = async (id) => {
@@ -76,7 +36,7 @@ const Users = () => {
   };
 
   return (
-    <div className="flex flex-col p-4 pt-14">
+    <div className="flex flex-col">
       <div className="grid grid-cols-6 gap-4 p-6">
         <div className="col-start-1 col-end-3 ...">
           <h1 className="font-semibold text-blue-900 text-3xl">USUARIOS</h1>
@@ -113,60 +73,67 @@ const Users = () => {
                 className="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search Mockups, Logos..."
                 required=""
-                onChange={handleSearch}
               />
+              <button
+                type="submit"
+                className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Search
+              </button>
             </div>
           </form>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-1 gap-x-8 lg:grid-cols-2 xl:grid-cols-3 xl:gap-x-8">
-        {state.map((item) => (
-          <div
-            key={item.userUID}
-            className="flex font-sans border-t-4 border-teal-800 rounded-lg"
-          >
-            <div className="flex-none w-1/3 relative">
-              <img
-                src={item.profileImage}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover"
-                loading="lazy"
-              />
-            </div>
-            <form className="flex-auto p-6 shadow-lg shadow-slate-500/50">
-              <div className="flex flex-wrap">
-                <h1 className="flex-auto text-lg font-semibold text-slate-900">
-                  {item.name}
-                </h1>
-                <div className="text-lg font-semibold text-slate-500" id={`role-card-${item.id}`}>
-                  {item.role === "user" ? "Usuario" : "Administrador"}
-                </div>
-                <div className="w-full flex-auto">
-                  <h2 className="flex-auto text-base font-semibold text-slate-600">
-                    {item.lastName}
-                  </h2>
-                </div>
-                <div className="w-full flex-auto font-semibold text-teal-800 ml-6 my-6 border-b-2">
-                  {item.email}
-                </div>
+      <div className="bg-white m-8">
+        <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-1 gap-x-8 lg:grid-cols-2 xl:grid-cols-3 xl:gap-x-8 ">
+          {data.map((item) => (
+            <div
+              key={item.userUID}
+              className="flex font-sans border-t-4 border-teal-800"
+            >
+              <div className="flex-none w-48 relative">
+                <img
+                  src={item.profileImage}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                  loading="lazy"
+                />
               </div>
+              <form className="flex-auto p-6 shadow-lg shadow-slate-500/50">
+                <div className="flex flex-wrap">
+                  <h1 className="flex-auto text-lg font-semibold text-slate-900">
+                    {item.name}
+                  </h1>
+                  <div className="text-lg font-semibold text-slate-500">
+                    {item.role === "user" ? "Usuario" : "Administrador"}
+                  </div>
+                  <div className="w-full flex-none">
+                    <h2 className="flex-auto text-base font-semibold text-slate-600">
+                      {item.lastName}
+                    </h2>
+                  </div>
+                  <div className="w-full flex-none font-semibold text-teal-800 m-6 border-b-2">
+                    {item.email}
+                  </div>
+                </div>
 
-              <div className="flex space-x-4 mb-6 text-sm font-medium">
-                <div className="flex-auto flex space-x-4">
-                  <SelectRole idUser={item.id} role={item.role} />
+                <div className="flex space-x-4 mb-6 text-sm font-medium">
+                  <div className="flex-auto flex space-x-4">
+                    <SelectRole idUser={item.id} role={item.role} />
+                  </div>
                 </div>
-              </div>
-              <button
-                className="h-10 w-full  font-semibold rounded-md bg-black text-white"
-                type="button"
-                onClick={() => handleClickDelete(item.id, item.userUID)}
-              >
-                Eliminar
-              </button>
-            </form>
-          </div>
-        ))}
+                <button
+                  className="h-10 w-full  font-semibold rounded-md bg-black text-white"
+                  type="button"
+                  onClick={() => handleClickDelete(item.id, item.userUID)}
+                >
+                  Delete
+                </button>
+              </form>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

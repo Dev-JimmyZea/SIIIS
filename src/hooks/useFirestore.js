@@ -17,6 +17,7 @@ const db = getFirestore(firebaseApp);
 
 // Hook
 export const useFirestore = () => {
+  const [data, setData] = useState([]);
   const [error, setError] = useState();
   const [loading, setLoading] = useState({});
 
@@ -36,38 +37,20 @@ export const useFirestore = () => {
           id: doc.id,
           ...doc.data(),
         }));
-        return dataDb;
+        setData(dataDb);
+      } else {
+        const querySnapshot = await getDocs(dataRef);
+        const dataDb = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setData(dataDb);
       }
     } catch (error) {
       console.log(error);
       setError(error.message);
     } finally {
       setLoading((prev) => ({ ...prev, getData: false }));
-    }
-  };
-  // get data user whit id from firestore with query
-  const getDataUserId = async (userUID) => {
-    try {
-      setLoading((prev) => ({ ...prev, getDataUserId: true }));
-
-      const dataRef = collection(db, "users");
-
-      const filterQuery = query(
-        dataRef,
-        where("userUID", "==", userUID)
-      );
-      const querySnapshot = await getDocs(filterQuery);
-      const dataDb = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      return dataDb;
-
-    } catch (error) {
-      console.log(error);
-      setError(error.message);
-    } finally {
-      setLoading((prev) => ({ ...prev, getDataUserId: false }));
     }
   };
 
@@ -77,12 +60,16 @@ export const useFirestore = () => {
       setLoading((prev) => ({ ...prev, getDataUsers: true }));
 
       const dataRef = collection(db, "users");
+      // const filterQuery = query(
+      // 	dataRef,
+      // 	where("userUID", "==", auth.currentUser.uid)
+      // );
       const querySnapshot = await getDocs(dataRef);
       const dataDb = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      return dataDb;
+      setData(dataDb);
     } catch (error) {
       console.log(error);
       setError(error.message);
@@ -108,7 +95,7 @@ export const useFirestore = () => {
       const dataRef = collection(db, "users");
 
       await addDoc(dataRef, newDoc);
-      return newDoc;
+      setData([...data, newDoc]);
     } catch (error) {
       console.log(error);
       setError(error.message);
@@ -124,10 +111,9 @@ export const useFirestore = () => {
       const dataRef = doc(db, "users", dataUser.id);
       await updateDoc(dataRef, dataUser);
 
-      return ((prev) =>
+      setData((prev) =>
         prev.map((item) => (item.id === dataUser.id ? dataUser : item))
       );
-
     } catch (error) {
       console.log(error);
       setError(error.message);
@@ -145,9 +131,9 @@ export const useFirestore = () => {
       };
       await updateDoc(dataRef, newData);
 
-      return ((prev) => {
-        return prev.map((item) => (item.id === dataUser.id ? newData : item));
-      });
+      setData((prev) =>
+        prev.map((item) => (item.id === dataUser.id ? newData : item))
+      );
     } catch (error) {
       console.log(error);
       setError(error.message);
@@ -162,8 +148,7 @@ export const useFirestore = () => {
       setLoading((prev) => ({ ...prev, [idUser]: true }));
       const docRef = doc(db, "users", idUser);
       await deleteDoc(docRef);
-      const data = await getData();
-      return data.filter((item) => item.id !== idUser);
+      setData(data.filter((item) => item.id !== idUser));
     } catch (error) {
       console.log(error);
       setError(error.message);
@@ -173,10 +158,11 @@ export const useFirestore = () => {
   };
 
   // return data
-  return {    error,
+  return {
+    data,
+    error,
     loading,
     getData,
-    getDataUserId,
     addData,
     getDataUsers,
     deleteData,

@@ -1,10 +1,10 @@
 // import dependencies
 import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserProvider";
 import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import { FormValidate } from "../utils/FormValidate";
-import { NavLink } from "react-router-dom";
 
 // import components
 import FormErrors from "../components/FormErrors";
@@ -13,9 +13,11 @@ import FormInput from "../components/FormInput";
 // page Login
 const Login = () => {
   const { loginUser } = useContext(UserContext);
+  const navegate = useNavigate();
 
   // validate form with react-hook-form
-  const { required, patternEmail, validateEmptyField } = FormValidate();
+  const { required, patternEmail, validateEmptyField } =
+    FormValidate();
 
   // useForm hook
   const {
@@ -29,7 +31,8 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       await loginUser(data.email, data.password);
-      window.location.href = "/";
+      navegate("/");
+      window.location.reload();
     } catch (error) {
       const { code, message } = ErrorsFirebase(error.code);
       setError(code, { message });
@@ -44,20 +47,21 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <img
-            className="mx-auto h-28 w-auto"
-            src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/image_resource%2Flogo_black.png?alt=media&token=865e49f6-bc1f-46ec-8e4e-923f503f0e96"
+            className="mx-auto h-12 w-auto"
+            src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
             alt="Workflow"
           />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Inicia sesión
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            O{" "}
-            <NavLink to="/register">
-              <span className="text-amber-500 hover:text-amber-400">
-                registrate
-              </span>
-            </NavLink>
+            Or{" "}
+            <a
+              href="#"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              start your 14-day free trial
+            </a>
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
@@ -100,7 +104,7 @@ const Login = () => {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                className="h-4 w-4 text-amber-500 focus:ring-amber-400 border-gray-300 rounded"
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
               />
               <label
                 htmlFor="remember-me"
@@ -111,17 +115,18 @@ const Login = () => {
             </div>
 
             <div className="text-sm">
-              <NavLink to="/forgot-password">
-                <span className="font-medium text-amber-500 hover:text-amber-400">
-                  Olvidaste tu contraseña?
-                </span>
-              </NavLink>
+              <a
+                href="#"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                ¿Olvidaste tu contraseña?
+              </a>
             </div>
           </div>
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-400 hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                 {/* <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" /> */}
