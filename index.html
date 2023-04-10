@@ -5,11 +5,25 @@
 
     <link rel="icon" type="image/svg+xml" href="/src/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <link rel="StyleSheet" href="src\index.css" type="text/css" />
+    <title>SIIIS</title>
   </head>
 
-  <body>
+  <body bgcolor="#ffffff">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      window.watsonAssistantChatOptions = {
+        integrationID: "c8f79da6-7fc4-4e80-8373-c01fe613ce5f", // The ID of this integration.
+        region: "us-east", // The region your integration is hosted in.
+        serviceInstanceID: "bb873dc4-38bb-4627-954b-ab7279c59916", // The ID of your service instance.
+        onLoad: function(instance) { instance.render(); }
+      };
+      setTimeout(function(){
+        const t=document.createElement('script');
+        t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
+        document.head.appendChild(t);
+      });
+    </script>
   </body>
 </html>

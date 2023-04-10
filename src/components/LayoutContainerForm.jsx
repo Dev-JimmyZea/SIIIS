@@ -16,7 +16,7 @@ const LayoutContainerForm = () => {
                         <polygon points="50,0 100,0 50,100 0,100" />
                     </svg>
 
-                    <div className="relative pt-6 px-4 sm:px-6 lg:px-8"></div>
+                    <div className="relative pt-16 px-4 sm:px-6 lg:px-8"></div>
 
                     {/* login or register*/}
                     <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -29,7 +29,7 @@ const LayoutContainerForm = () => {
             <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
                 <img
                     className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
-                    src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80"
+                    src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/image_resource%2FlayoutContainer.webp?alt=media&token=1dc98561-ffba-4f95-ad85-9260f16c0dfe"
                     alt=""
                 />
             </div>

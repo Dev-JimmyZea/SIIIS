@@ -10,12 +10,22 @@ import { UserContext } from "../context/UserProvider";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
 import firebaseApp from "../Firebase";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
+import Article from "./Article";
 
 const storage = getStorage(firebaseApp);
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
+  const [data, setData] = useState([]);
+  const imgRef = useRef();
+  const locationImage = useRef();
 
   const cancelButtonRef = useRef(null);
 
@@ -32,31 +42,36 @@ const Profile = () => {
     setError,
   } = useForm();
 
-  const { data, loading, getData, updateData, deleteData } =
-    useFirestore();
-
+  const { loading, getData, updateData, deleteData } = useFirestore();
+  const [loadingImage, setLoadingImage] = useState(false);
 
   useEffect(() => {
-    getData();
+    const loadData = async () => {
+      const data = await getData();
+      setData(data);
+      imgRef.current = data[0].profileImage;
+    };
+    loadData();
   }, []);
 
   if (loading.getData || loading.getData === undefined) {
-    return <div
-      className="text-center text-gray-500 text-xl font-bold h-screen"
-    >Cargando...</div>;
-  }else{
-    // console.log(data);
+    return (
+      <div className="text-center text-gray-500 text-xl font-bold h-screen">
+        Cargando...
+      </div>
+    );
   }
+
   // useState hook
   const onSubmit = async (dataUp) => {
-    // console.log(dataUp);
     const dataNew = {
       ...data[0],
       ...dataUp,
-    }
-    // console.log(dataNew);
+    };
     try {
       await updateData(dataNew);
+      alert("Datos actualizados");
+      setLoadingImage(false);
     } catch (error) {
       console.log(error.code);
       const { code, message } = ErrorsFirebase(error.code);
@@ -64,66 +79,167 @@ const Profile = () => {
     }
   };
 
-  const handleClickDelete = async (userUID) => {
+  const handleClickDelete = async (userData) => {
     try {
+      await deleteData(userData.id);
       await deleteUserWhitID();
-      await deleteData(id);
+      const storage = getStorage();
+      if (userData.locationImage) {
+        // Create a reference to the file to delete
+        const desertRef = ref(storage, userData.locationImage);
+        // Delete the file
+        await deleteObject(desertRef)
+          .then(() => {
+            // File deleted successfully
+          })
+          .catch((error) => {
+            // Uh-oh, an error occurred!
+          });
+      }
     } catch (error) {
       console.log(error.code);
       const { code, message } = ErrorsFirebase(error.code);
       setError(code, { message });
     }
   };
-
 
   const fileHandler = async (e) => {
+    const storage = getStorage();
+    if (data[0].locationImage) {
+      // Create a reference to the file to delete
+      const desertRef = ref(storage, data[0].locationImage);
+      // Delete the file
+      await deleteObject(desertRef)
+        .then(() => {
+          // File deleted successfully
+        })
+        .catch((error) => {
+          // Uh-oh, an error occurred!
+        });
+    }
+    setLoadingImage(true);
     const file = e.target.files[0];
-    const storageRef = ref(storage, `profile_images/${file.name}`);
+    const name_file =
+      data[0].name.split(" ").join("") + data[0].userUID.split(" ").join("");
+    const storageRef = ref(storage, `profile_images/${name_file}`);
+    locationImage.current = `profile_images/${name_file}`;
     await uploadBytes(storageRef, file);
     const url = await getDownloadURL(storageRef);
     const img = document.getElementById("image-profile");
     img.src = url;
+    imgRef.current = url;
     const dataNew = {
       ...data[0],
       profileImage: url,
-    }
-    onSubmit(dataNew);
-  }
+      locationImage: locationImage.current,
+    };
 
+    onSubmit(dataNew);
+  };
 
   return (
     <>
       <FormErrors error={errors.errorIntern} />
-
-      <div
-        className="p-6 w-9/12 ml-auto mr-auto my-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
-      >
+      <div className="p-6 my-24 w-9/12 ml-auto mr-auto bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <div className="grid gap-6 mb-3 lg:grid-cols-4">
-
-          <label
-            className=" col-end-5  text-lg font-semibold text-slate-500 text-right rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          >Rol: {data[0].role === "admin" ? "Administrador" : "Usuario"} </label>
+          <label className=" col-end-5  text-lg font-semibold text-slate-500 text-right rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            Rol: {data[0].role === "admin" ? "Administrador" : "Usuario"}{" "}
+          </label>
         </div>
-        <div className={'flex justify-center items-center my-0 mx-auto'}>
-          <figure className={'relative w-40 h-40 rounded-full border-2 border-solid border-gray-300 z-0 hover:opacity-100 hover:visible'}>
-            <label htmlFor="file-input" className={'cursor-pointer'}>
-              <img
-                id={'image-profile'}
-                className={'w-full h-full rounded-full transition-all duration-300 ease-out'}
-                src={data[0].profileImage} alt={'profile'} />
-              <div className={'absolute top-0 left-0 w-full h-full bg-slate-300 flex flex-col justify-end opacity-0 invisible text-center rounded-full text-xl text-white transition-all duration-300 ease-out'}>
+        {/* --------------------------------------start profile image------------------------------------- */}
+        <div
+          className={
+            "profile-image flex justify-center items-center my-0 mx-auto"
+          }
+        >
+          <figure
+            className={
+              "relative w-40 h-40 rounded-full border-2 border-solid border-gray-300 z-0"
+            }
+          >
+            <label
+              htmlFor="file-input"
+              className={"cursor-pointer w-full h-full flex justify-center"}
+            >
+              {loadingImage ? (
+                <label className="text-center font-bold h-screen">
+                  <svg
+                    className="animate-spin"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 01 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                </label>
+              ) : (
+                <img
+                  id={"image-profile"}
+                  className={
+                    "w-full h-full rounded-full transition-all duration-300 ease-out object-cover object-center"
+                  }
+                  src={imgRef.current}
+                  alt={"profile"}
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
+
+              <div
+                className={
+                  "profile-image-edit absolute top-0 left-0 w-full h-full flex flex-col justify-end opacity-0 invisible text-center rounded-full text-xl text-white transition-all duration-300 ease-out hover:opacity-100 hover:visible"
+                }
+              >
                 <span>Subir foto</span>
-                <i className="fas fa-camera mb-2.5"></i>
+                {/* <i className="fas fa-camera mb-2.5"></i> */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 mb-2.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
               </div>
             </label>
 
-            <input className={'hidden'} id="file-input" name="image" type="file" onChange={fileHandler}/>
+            <input
+              className={"hidden"}
+              id="file-input"
+              name="image"
+              type="file"
+              onChange={fileHandler}
+            />
           </figure>
-
         </div>
+        {/* ---------------------------------------------------------------------------------------------------------------- */}
 
         <form onSubmit={handleSubmit(onSubmit)}>
-
           <div className="grid gap-6 my-6 lg:grid-cols-2">
             <FormInputProfile
               type="text"
@@ -267,7 +383,7 @@ const Profile = () => {
 
           <button
             type="submit"
-            className=" group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className=" group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-400 hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
           >
             Actualizar Información
           </button>
@@ -339,7 +455,7 @@ const Profile = () => {
                       <button
                         type="button"
                         className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                        onClick={() => handleClickDelete(data[0].id)}
+                        onClick={() => handleClickDelete(data[0])}
                       >
                         Eliminar cuenta
                       </button>
@@ -359,6 +475,7 @@ const Profile = () => {
           </Dialog>
         </Transition.Root>
       </div>
+      <Article idPerson={data[0].userUID}/>
     </>
   );
 };

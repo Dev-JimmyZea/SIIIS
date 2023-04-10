@@ -1,16 +1,21 @@
 // import dependencies
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useFirestore } from "../hooks/useFirestore";
 
 const RequireAuthAdmin = ({ children }) => {
-	const { getData, loading, data } = useFirestore();
+	const { getData, loading } = useFirestore();
+	const [data, setData] = useState([]);
 
 	useEffect(() => {
-		getData();
+		const loadData = async () => {
+			const data = await getData();
+			console.log(data);
+			setData(data);
+		}
+		loadData();
 	}, []);
 
-	// if (loading.getData ) {
 	if (loading.getData || loading.getData === undefined) {
 		return <div
 			className="text-center text-gray-500 text-xl font-bold h-screen"
@@ -19,7 +24,7 @@ const RequireAuthAdmin = ({ children }) => {
 		return data.map((item) => {
 			return (
 				<div key={item.userUID}>
-					{item.role == "admin" ? children : <Navigate to="/" />};
+					{item.role == "admin" ? children : <Navigate to="/" />}
 				</div>
 			);
 		});
