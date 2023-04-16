@@ -76,7 +76,6 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
   const fileHandler = async (e) => {
     setLoadingImage(true);
     const file = e.target.files[0];
-    console.log(user.uid);
     const name_file = file.name + user.uid;
     const storageRef = ref(storage, `images_articles/${name_file}`);
     locationImage.current = `images_articles/${name_file}`;

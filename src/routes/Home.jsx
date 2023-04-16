@@ -54,7 +54,7 @@ const Home = () => {
     <div className={"mt-14 bg-white"}>
       <div className="border rounded p-6 h-56 sm:h-64 xl:h-80 2xl:h-96">
       {data && data.length !== 0 && data[0].role === "admin" && (
-            <div className="flex justify-center items-center z-50 absolute">
+            <div className="flex justify-center items-center z-20 absolute">
               <label
                 htmlFor="file"
                 className="flex flex-col items-center px-4 py-2 bg-white text-blue-600 rounded-lg shadow-lg tracking-wide uppercase border border-blue-600 cursor-pointer hover:bg-blue-600 hover:text-white"
@@ -143,12 +143,10 @@ const Home = () => {
               {data && data[0].role === "admin" && (
                 <div className="flex justify-end z-0">
                   <button
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full z-50 absolute"
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full z-30 absolute"
                     onClick={() => {
                       const imageRef = ref(storage, `images_slider/${image.name}`);
-                      console.log(imageRef);
                       deleteObject(imageRef).then(() => {
-                        console.log("deleted");
                         alert("Imagen eliminada con exito");
                         const imagesRef = ref(storage, "images_slider");
                         listAll(imagesRef)

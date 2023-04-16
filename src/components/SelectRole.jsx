@@ -18,6 +18,12 @@ const people = [
     avatar:
       "https://e7.pngegg.com/pngimages/524/546/png-clipart-computer-icons-management-account-manager-account-manager-desktop-wallpaper-black.png",
   },
+  {
+    id: 3,
+    name: "Integrante",
+    avatar:
+      "https://e7.pngegg.com/pngimages/524/546/png-clipart-computer-icons-management-account-manager-account-manager-desktop-wallpaper-black.png",
+  },
 ];
 
 function classNames(...classes) {
@@ -30,19 +36,17 @@ const SelectRole = ({ idUser, role }) => {
   const [error, setError] = useState();
 
   const [selected, setSelected] = useState(
-    role === "user" ? people[0] : people[1]
+    role === "user" ? people[0] : role === "admin" ? people[1] : people[2]
   );
 
   const handleChange = async (e) => {
     setSelected(e);
     const role_card = document.getElementById(`role-card-${idUser}`);
-    role_card.innerHTML = e.name
+    role_card.innerHTML = e.name;
 
     try {
-
-      await updateRole({ id: idUser, role: e.id === 1 ? "user" : "admin" });
-      alert("Ahora eres un " + e.name);
-
+      await updateRole({ id: idUser, role: e.id === 1 ? "user" : e.id === 2 ? "admin" : "member" });
+      alert("Rol Actualizado");
     } catch (error) {
       console.log(error.code);
       const { code, message } = ErrorsFirebase(error.code);
@@ -88,7 +92,7 @@ const SelectRole = ({ idUser, role }) => {
                     key={person.id}
                     className={({ active }) =>
                       classNames(
-                        active ? "text-white bg-indigo-600" : "text-gray-900",
+                        active ? "text-white bg-amber-500" : "text-gray-900",
                         "cursor-default select-none relative py-2 pl-3 pr-9"
                       )
                     }

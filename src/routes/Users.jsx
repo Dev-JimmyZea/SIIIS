@@ -7,7 +7,6 @@ import SelectRole from "../components/SelectRole";
 
 const Users = () => {
   const { loading, getData, getDataUsers, deleteData } = useFirestore();
-  const { setError } = useForm();
   const [data, setData] = useState([]);
   const [dataUsers, setDataUsers] = useState([]);
 
@@ -71,16 +70,6 @@ const Users = () => {
     });
   };
 
-  const handleClickDelete = async (id) => {
-    try {
-      await deleteData(id);
-    } catch (error) {
-      console.log(error.code);
-      const { code, message } = ErrorsFirebase(error.code);
-      setError(code, { message });
-    }
-  };
-
 
   return (
     <div className="flex flex-col p-4 pt-14 bg-white">
@@ -131,23 +120,6 @@ const Users = () => {
         {state.map((item) => (
           <div key={item.id}>
             <ModalArticlesPerPerson item={item} data={data[0]} />
-            {/* {data[0].role === "admin" && (
-                    <>
-                      <div className="flex space-x-4 mb-6 text-sm font-medium">
-                        <div className="flex-auto flex space-x-4">
-                          <SelectRole idUser={item.id} role={item.role} />
-                        </div>
-                      </div>
-
-                      <button
-                        className="h-10 w-full  font-semibold rounded-md bg-black text-white"
-                        type="button"
-                        onClick={() => handleClickDelete(item.id, item.userUID)}
-                      >
-                        Eliminar
-                      </button>
-                    </>
-                  )} */}
           </div>
         ))}
       </div>

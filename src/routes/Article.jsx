@@ -7,7 +7,7 @@ import { getStorage, ref, deleteObject } from "firebase/storage";
 import Modal_Article from "../components/Modal_Article";
 
 const Article = ({ idPerson }) => {
-  console.log("idPerson", idPerson);
+  
   const {
     loadingArticle,
     getDataArticles,
@@ -62,7 +62,6 @@ const Article = ({ idPerson }) => {
   }
 
   const handleClickDelete = async (data) => {
-    console.log("data", data);
     try {
       await deleteDataArticle(data.id);
       const storage = getStorage();
@@ -261,8 +260,7 @@ const Article = ({ idPerson }) => {
             <div className="mt-6 space-y-12 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-6 ">
               {state.map((item) =>
                 idPerson != null
-                  ? (console.log("...", item.userUID),
-                    idPerson == item.userUID && cardArticcle(item))
+                  ? (idPerson == item.userUID && cardArticcle(item))
                   : cardArticcle(item)
               )}
             </div>

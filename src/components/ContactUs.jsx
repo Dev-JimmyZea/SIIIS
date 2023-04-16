@@ -23,7 +23,6 @@ const ContacUs = () => {
   // useState hook
   const sendEmail = (event) => {
     event.preventDefault();
-    console.log("contacto", event);
     try {
       emailjs.sendForm('service_f3257sq','template_fxqjp1f',event.target,'2Zgc6yupq1YAQYEjZ')
       .then(response=> 

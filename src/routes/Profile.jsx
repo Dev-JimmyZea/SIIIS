@@ -18,6 +18,8 @@ import {
   deleteObject,
 } from "firebase/storage";
 import Article from "./Article";
+import { useFirestoreArticles } from "../hooks/useFirestoreArticles";
+import { useFirestoreReviews } from "../hooks/useFirestoreReviews";
 
 const storage = getStorage(firebaseApp);
 
@@ -30,6 +32,8 @@ const Profile = () => {
   const cancelButtonRef = useRef(null);
 
   const { deleteUserWhitID } = useContext(UserContext);
+  const { deleteDataArticle } = useFirestoreArticles();
+  const { deleteDataReview } = useFirestoreReviews();
 
   // validate form with react-hook-form
   const { required } = FormValidate();
@@ -70,6 +74,7 @@ const Profile = () => {
     };
     try {
       await updateData(dataNew);
+      setData([dataNew]);
       alert("Datos actualizados");
       setLoadingImage(false);
     } catch (error) {
@@ -82,8 +87,6 @@ const Profile = () => {
   const handleClickDelete = async (userData) => {
     try {
       await deleteData(userData.id);
-      await deleteUserWhitID();
-      const storage = getStorage();
       if (userData.locationImage) {
         // Create a reference to the file to delete
         const desertRef = ref(storage, userData.locationImage);
@@ -96,6 +99,10 @@ const Profile = () => {
             // Uh-oh, an error occurred!
           });
       }
+      await deleteDataArticle(userData.id);
+      await deleteDataReview(userData.id);
+      await deleteUserWhitID();
+      window.location.href = "/";
     } catch (error) {
       console.log(error.code);
       const { code, message } = ErrorsFirebase(error.code);
@@ -104,7 +111,6 @@ const Profile = () => {
   };
 
   const fileHandler = async (e) => {
-    const storage = getStorage();
     if (data[0].locationImage) {
       // Create a reference to the file to delete
       const desertRef = ref(storage, data[0].locationImage);
@@ -269,55 +275,6 @@ const Profile = () => {
               <FormErrors error={errors.name} />
             </FormInputProfile>
 
-            <div className="flex flex-wrap">
-              <div className="flex items-center mr-4">
-                <input
-                  id="red-radio"
-                  type="radio"
-                  defaultValue=""
-                  name="colored-radio"
-                  className="w-4 h-4 text-pink-500 bg-gray-100 border-gray-300 focus:ring-pink-400 dark:focus:ring-pink-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                />
-                <label
-                  htmlFor="red-radio"
-                  className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                >
-                  Femenino
-                </label>
-              </div>
-              <div className="flex items-center mr-4">
-                <input
-                  id="green-radio"
-                  type="radio"
-                  defaultValue=""
-                  name="colored-radio"
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                />
-                <label
-                  htmlFor="green-radio"
-                  className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                >
-                  Masculino
-                </label>
-              </div>
-
-              <div className="flex items-center mr-4">
-                <input
-                  id="teal-radio"
-                  type="radio"
-                  defaultValue=""
-                  name="colored-radio"
-                  className="w-4 h-4 text-teal-600 bg-gray-100 border-gray-300 focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                />
-                <label
-                  htmlFor="teal-radio"
-                  className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                >
-                  LGBTQ +
-                </label>
-              </div>
-            </div>
-
             <FormInputProfile
               type="tel"
               placeholder={data[0].phone}
@@ -331,55 +288,26 @@ const Profile = () => {
             >
               <FormErrors error={errors.phone} />
             </FormInputProfile>
+            <div className="mb-6">
+              <label
+                htmlFor="email"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >
+                Correo
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder={data[0].email}
+                defaultValue={data[0].email}
+                readOnly
+                {...register("email")}
+              />
+            </div>
           </div>
-          <div className="mb-6">
-            <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              Correo
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder={data[0].email}
-              defaultValue={data[0].email}
-              readOnly
-              {...register("email")}
-            />
-          </div>
-          <div className="mb-6">
-            <label
-              htmlFor="password"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              Contraseña
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="•••••••••"
-              required=""
-            />
-          </div>
-          <div className="mb-6">
-            <label
-              htmlFor="confirm_password"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              Confirmar contraseña
-            </label>
-            <input
-              type="password"
-              id="confirm_password"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="•••••••••"
-              required=""
-            />
-          </div>
+
 
           <button
             type="submit"
@@ -475,7 +403,7 @@ const Profile = () => {
           </Dialog>
         </Transition.Root>
       </div>
-      <Article idPerson={data[0].userUID}/>
+      <Article idPerson={data[0].userUID} />
     </>
   );
 };

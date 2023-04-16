@@ -1,7 +1,9 @@
 {
   "name": "siiis-project",
+  "homepage": "http://www.siiis.com.co",
+  "version": "1.0.0",
+  "description": "Aplicación web para la gestión de proyectos de investigación",
   "private": true,
-  "version": "0.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,7 +12,7 @@
   "dependencies": {
     "@emailjs/browser": "3.7.0",
     "@headlessui/react": "1.6.6",
-    "@headlessui/vue": "^0.0.0-insiders.f0dd25f",
+    "@headlessui/vue": "0.0.0-insiders.f0dd25f",
     "@heroicons/react": "1.0.6",
     "@tinymce/tinymce-react": "4.1.0",
     "firebase": "9.9.0",

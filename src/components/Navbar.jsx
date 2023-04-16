@@ -20,6 +20,8 @@ const navigation = [
   { name: "Integrantes", href: "/users", current: false },
   { name: "Contacto", href: "/Contact", current: false },
   { name: "Acerca de", href: "/AboutUs", current: false },
+  { name: "Login", href: "/login", current: false },
+  { name: "Registro", href: "/register", current: false },
 ];
 
 function classNames(...classes) {
@@ -31,6 +33,7 @@ const Navbar = () => {
   const { loading, getData } = useFirestore();
   const [data, setData] = useState([]);
   const navegate = useNavigate();
+  const [open, setOpen] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
@@ -90,37 +93,44 @@ const Navbar = () => {
                 </div>
                 <div className="hidden sm:block sm:ml-6 my-auto">
                   <div className="flex space-x-4">
-                    {navigation.map((item) => (
-                      <div key={item.name}>
-                        {item.name == "Blog" ? (
-                          <a
-                          target={"_blank"}
-                            href={item.href}
-                            className={classNames(
-                              item.current
-                                ? "bg-gray-900 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                              "px-3 py-2 rounded-md text-sm font-medium"
-                            )}
-                          >
-                            {item.name}
-                          </a>
-                        ) : (
-                          <NavLink
-                            to={item.href}
-                            className={classNames(
-                              item.current
-                                ? "bg-gray-900 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                              "px-3 py-2 rounded-md text-sm font-medium"
-                            )}
-                            aria-current={item.current ? "page" : undefined}
-                          >
-                            {item.name}
-                          </NavLink>
-                        )}
-                      </div>
-                    ))}
+                    {
+                      navigation.map((item) => (
+                        <div key={item.name}>
+                          {
+                            // menu web
+                            item.name === "Login" || item.name === "Registro" ? (
+                              ""
+                            ) :
+                              item.name == "Blog" ? (
+                                <a
+                                  target={"_blank"}
+                                  href={item.href}
+                                  className={classNames(
+                                    item.current
+                                      ? "bg-gray-900 text-white"
+                                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                                    "px-3 py-2 rounded-md text-sm font-medium"
+                                  )}
+                                >
+                                  {item.name}
+                                </a>
+                              ) : (
+                                <NavLink
+                                  to={item.href}
+                                  className={classNames(
+                                    item.current
+                                      ? "bg-gray-900 text-white"
+                                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                                    "px-3 py-2 rounded-md text-sm font-medium"
+                                  )}
+                                  aria-current={item.current ? "page" : undefined}
+                                >
+                                  {item.name}
+                                </NavLink>
+                              )}
+                        </div>
+                      ))
+                    }
                   </div>
                 </div>
               </div>
@@ -251,23 +261,59 @@ const Navbar = () => {
           </div>
 
           <Disclosure.Panel className="sm:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navigation.map((item) => (
-                <Disclosure.Button
-                  key={item.name}
-                  as="a"
-                  href={item.href}
-                  className={classNames(
-                    item.current
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "block px-3 py-2 rounded-md text-base font-medium"
-                  )}
-                  aria-current={item.current ? "page" : undefined}
-                >
-                  {item.name}
-                </Disclosure.Button>
-              ))}
+            <div className="px-2 pt-2 pb-3 space-y-1 z-50">
+              {
+                // mobile menu
+                navigation.map((item) =>
+                  user && (item.name === "Login" || item.name === "Registro") ? (
+                    ""
+                  ) :
+                  item.name == "Blog" ? (
+                    <a
+                      key={item.name}
+                      target={"_blank"}
+                      href={item.href}
+                      className={classNames(
+                        item.current
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                        "px-3 py-2 rounded-md text-sm font-medium"
+                      )}
+                    >
+                      {item.name}
+                    </a>
+                  ) : 
+                    item.name === "Registro" || item.name === "Login" ? (
+                      <NavLink
+                        key={item.name}
+                        to={item.href}                          
+                        className={classNames(
+                          true
+                            ? "bg-amber-500 text-white"
+                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                          "block px-3 py-2 rounded-md text-base font-medium"
+                        )}
+                        aria-current="page"
+                      >
+                        {item.name}
+                      </NavLink>
+                    ) : (
+                      <NavLink
+                      key={item.name}
+                      to={item.href}
+                      className={classNames(
+                        item.current
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                        "block px-3 py-2 rounded-md text-base font-medium"
+                      )}
+                      aria-current={item.current ? "page" : undefined}
+                    >
+                      {item.name}
+                    </NavLink>
+                    )
+                )
+              }
             </div>
           </Disclosure.Panel>
         </>

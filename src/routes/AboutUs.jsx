@@ -1,4 +1,5 @@
 import React from "react";
+import Members from "../components/members";
 const AboutUs = () => {
   return (
     <div className="mt-6 2xl:container 2xl:mx-auto lg:py-16 lg:px-20 md:py-12 md:px-6 py-9 px-4">
@@ -30,8 +31,8 @@ const AboutUs = () => {
           />
         </div>
       </div>
-
-      <div className="flex lg:flex-row flex-col justify-between gap-8 pt-12">
+      <Members />
+      <div className="flex lg:flex-row flex-col justify-between gap-8 p-4 mt-12 bg-slate-100" style={{ borderRadius: "1rem" }}>
         <div className="w-full lg:w-5/12 flex flex-col justify-center">
           <h1 className="text-3xl lg:text-4xl font-bold leading-9 text-gray-800 pb-4">
             Desarrolladores
@@ -44,19 +45,13 @@ const AboutUs = () => {
           </p>
         </div>
         <div className="w-full lg:w-6/12 lg:pt-8">
-          <div className="grid sm:grid-cols-2 grid-cols-1 shadow-lg rounded-md">
-            <p className="p-2 font-normal col-span-2 text-base text-center leading-6 text-gray-600 ">
-              Ingenieros de Sistemas y Computación
-            </p>
-
-            <div className="p-4 pb-6 flex justify-center flex-col items-center">
+          <p className="p-2 font-normal col-span-2 text-base text-center leading-6 text-gray-600 ">
+            Ingenieros de Sistemas y Computación
+          </p>
+          <div className="flex flex-col lg:flex-row justify-center gap-4">
+            <div className="p-4 pb-6 text-center">
               <img
-                className="md:block hidden lg:gap-4 shadow-lg rounded-md"
-                src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FEsteban.jpg?alt=media&token=6c51bc88-0477-46bb-af98-b5319903885e"
-                alt="Esteban featured Img"
-              />
-              <img
-                className="md:hidden block"
+                className="w-40 h-40 rounded-full mx-auto object-cover"
                 src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FEsteban.jpg?alt=media&token=6c51bc88-0477-46bb-af98-b5319903885e"
                 alt="Esteban featured Img"
               />
@@ -64,17 +59,14 @@ const AboutUs = () => {
                 Esteban Duarte
               </p>
               <p className="font-normal text-base leading-6 text-gray-600">
-                Correo: yessidduarte7@gmail.com
+                <a href="mailto:yessidduarte7@gmail.com">
+                  Correo:yessidduarte7@gmail.com
+                </a>
               </p>
             </div>
-            <div className="p-4 pb-6 flex justify-center flex-col items-center">
+            <div className="p-4 pb-6 text-center">
               <img
-                className="md:block hidden lg:gap-4 shadow-lg rounded-md"
-                src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FJimmyZea.jpeg?alt=media&token=12f12f9b-f0f1-4a28-ad24-709d80821beb"
-                alt="Jimmy featured Img"
-              />
-              <img
-                className="md:hidden block"
+                className="w-40 h-40 rounded-full mx-auto object-cover"
                 src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FJimmyZea.jpeg?alt=media&token=12f12f9b-f0f1-4a28-ad24-709d80821beb"
                 alt="Jimmy featured Img"
               />
@@ -82,12 +74,16 @@ const AboutUs = () => {
                 Jimmy Zea
               </p>
               <p className="font-normal text-base leading-6 text-gray-600">
-                Correo: jimmy.zea@uptc.edu.co
+                <a href="mailto:yessidduarte7@gmail.com">
+                  Correo:yessidduarte7@gmail.com
+                </a>
               </p>
             </div>
           </div>
         </div>
+
       </div>
+      {/* ------------------------------------------------------------------------------------------------------- */}
     </div>
   );
 };

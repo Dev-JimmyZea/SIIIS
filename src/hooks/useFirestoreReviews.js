@@ -86,7 +86,6 @@ export const useFirestoreReviews = () => {
 
   // update data to firestore
   const updateDataReview = async (dataReview) => {
-    console.log("....",dataReview);
     try {
       setLoadingReview((prev) => ({ ...prev, updateData: true }));
       const dataRef = doc(db, "reviews", dataReview.id);

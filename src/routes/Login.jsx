@@ -9,10 +9,13 @@ import { NavLink } from "react-router-dom";
 // import components
 import FormErrors from "../components/FormErrors";
 import FormInput from "../components/FormInput";
+import { useFirestore } from "../hooks/useFirestore";
 
 // page Login
 const Login = () => {
-  const { loginUser } = useContext(UserContext);
+  const { loginUser, logoutUser } = useContext(UserContext);
+
+  const { getData } =useFirestore();
 
   // validate form with react-hook-form
   const { required, patternEmail, validateEmptyField } = FormValidate();
@@ -28,8 +31,21 @@ const Login = () => {
   // useState hook
   const onSubmit = async (data) => {
     try {
-      await loginUser(data.email, data.password);
-      window.location.href = "/";
+      if (await loginUser(data.email, data.password)) {
+        
+        const user = await getData("users", data.email);
+
+        if (user[0].name === "" && user[0].lastName === "" && user[0].phone === "") {
+          window.location.href = "/profile";
+        } else {
+          window.location.href = "/";
+        }
+        
+      } else {
+        alert("Aún no has verificado tu cuenta");
+        await logoutUser();
+        window.location.href = "/login";
+      }
     } catch (error) {
       const { code, message } = ErrorsFirebase(error.code);
       setError(code, { message });

@@ -37,7 +37,6 @@ const Comments = ({ fucntionComent, comment }) => {
       if (fucntionComent === "Crear") {
         await addDataReview(dataNew);
       } else {
-        console.log("update", data);
         await updateDataReview(dataNew);
       }
       window.location.href = "/";

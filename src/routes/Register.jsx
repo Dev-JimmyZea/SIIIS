@@ -13,7 +13,7 @@ import { useFirestore } from "../hooks/useFirestore";
 
 // page register
 const Register = () => {
-	const { registerUser } = useContext(UserContext);
+	const { registerUser, logoutUser } = useContext(UserContext);
 	const { addData } = useFirestore();
 	// validate form with react-hook-form
 	const {
@@ -36,15 +36,19 @@ const Register = () => {
 	// useState hook
 	const onSubmit = async (data) => {
 		try {
-			await registerUser(data.email, data.password);
-			await addData({
-				name: "",
-				lastName: "",
-				phone: "",
-				email: data.email,
-				profileImage: "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
-			});
-			window.location.href = "/profile";
+			const userl = await registerUser(data.email, data.password);
+			if (userl) {
+				await addData({
+					name: "",
+					lastName: "",
+					phone: "",
+					email: data.email,
+					profileImage: "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
+				});
+				await logoutUser();
+				window.location.href = "/login";
+			}
+
 		} catch (error) {
 			console.log(error.code);
 			const { code, message } = ErrorsFirebase(error.code);

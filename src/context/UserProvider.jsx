@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import firebaseApp from "../Firebase";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser, sendPasswordResetEmail } from "firebase/auth";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser, sendPasswordResetEmail, sendEmailVerification } from "firebase/auth";
 const auth = getAuth(firebaseApp);
 
 export const UserContext = createContext();
@@ -36,11 +36,39 @@ const UserProvider = (props) => {
 
   // register user
   const registerUser = (email, password) =>
-    createUserWithEmailAndPassword(auth, email, password);
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        sendEmailVerification(user);
+        alert("Se ha enviado un correo de verificación");
+        return user;
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        return { errorCode, errorMessage };
+      });
+
 
   // login user
   const loginUser = (email, password) =>
-    signInWithEmailAndPassword(auth, email, password);
+    // validate email verification
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        if (user.emailVerified) {
+          return user;
+        } else {
+          return false;
+        }
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        return { errorCode, errorMessage };
+      });
 
   // logout user
   const logoutUser = () => signOut(auth);
@@ -48,6 +76,12 @@ const UserProvider = (props) => {
   // delete user
   const deleteUserWhitID = () => {
     const userTest = getAuth().currentUser;
+    return deleteUser(userTest);
+  };
+
+  // delete user whit id
+  const deleteUserID = (id) => {
+    const userTest = id;
     return deleteUser(userTest);
   };
 

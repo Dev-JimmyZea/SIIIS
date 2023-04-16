@@ -10,7 +10,6 @@ const RequireAuthAdmin = ({ children }) => {
 	useEffect(() => {
 		const loadData = async () => {
 			const data = await getData();
-			console.log(data);
 			setData(data);
 		}
 		loadData();
