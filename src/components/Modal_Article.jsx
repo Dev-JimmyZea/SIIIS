@@ -1,11 +1,34 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useRef, useState, useContext, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import EditorTiny from "./Editor";
+import { UserContext } from "../context/UserProvider";
+import { useFirestore } from "../hooks/useFirestore";
 
 const Modal_Article = ({ dataArticle1, functionEdit }) => {
   const [open, setOpen] = useState(false);
   const cancelButtonRef = useRef(null);
+  const [data, setData] = useState([]);
+  const { user } = useContext(UserContext);
+  const {loading, getData } = useFirestore();
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await getData();
+      setData(data);
+    };
+    loadData();
+  }, []);
+
+
+  if (loading.getData || loading.getData === undefined) {
+    return (
+      <div className="text-center text-gray-500 text-xl font-bold h-screen">
+        Cargando...
+      </div>
+    );
+  }
+  
   return (
     <>
       <button
@@ -13,7 +36,7 @@ const Modal_Article = ({ dataArticle1, functionEdit }) => {
         type="button"
         className="w-full py-2.5 px-5  text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100  hover:text-amber-400 hover:border-amber-500 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
       >
-        {functionEdit === "create" ? "Crear" : "Abrir"}
+        {functionEdit === "create" && user?.role !== "member" ? "Crear" : "Abrir"}
       </button>
       <Transition.Root show={open} as={Fragment}>
         <Dialog

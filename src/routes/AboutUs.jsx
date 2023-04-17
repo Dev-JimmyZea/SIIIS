@@ -32,8 +32,8 @@ const AboutUs = () => {
         </div>
       </div>
       <Members />
-      <div className="flex lg:flex-row flex-col justify-between gap-8 p-4 mt-12 bg-slate-100" style={{ borderRadius: "1rem" }}>
-        <div className="w-full lg:w-5/12 flex flex-col justify-center">
+      <div className="flex lg:flex-row flex-col justify-between p-4 px-6 mt-12 bg-slate-100" style={{ borderRadius: "1rem" }}>
+        <div className="w-full lg:w-5/12 flex flex-col justify-center pr-10">
           <h1 className="text-3xl lg:text-4xl font-bold leading-9 text-gray-800 pb-4">
             Desarrolladores
           </h1>
@@ -44,38 +44,53 @@ const AboutUs = () => {
             los estudiantes de la universidad.
           </p>
         </div>
-        <div className="w-full lg:w-6/12 lg:pt-8">
-          <p className="p-2 font-normal col-span-2 text-base text-center leading-6 text-gray-600 ">
+        <div className="w-full lg:w-7/12 lg:pt-4">
+          <p className="p-2 pb-6 font-bold col-span-2 text-xl text-center leading-6 text-gray-600 ">
             Ingenieros de Sistemas y Computación
           </p>
-          <div className="flex flex-col lg:flex-row justify-center gap-4">
-            <div className="p-4 pb-6 text-center">
+          <div className="flex flex-col lg:flex-row justify-center gap-2">
+            <div className="p-2 pb-6 text-center">
               <img
-                className="w-40 h-40 rounded-full mx-auto object-cover"
+                className="w-32 h-32 rounded-full mx-auto object-cover"
                 src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FEsteban.jpg?alt=media&token=6c51bc88-0477-46bb-af98-b5319903885e"
                 alt="Esteban featured Img"
               />
-              <p className="font-semibold text-xl leading-5 text-gray-800 mt-4">
+              <p className="font-semibold text-base leading-5 text-gray-800 mt-4">
                 Esteban Duarte
               </p>
               <p className="font-normal text-base leading-6 text-gray-600">
                 <a href="mailto:yessidduarte7@gmail.com">
-                  Correo:yessidduarte7@gmail.com
+                  yessidduarte7@gmail.com
                 </a>
               </p>
             </div>
-            <div className="p-4 pb-6 text-center">
+            <div className="p-2 pb-6 text-center">
               <img
-                className="w-40 h-40 rounded-full mx-auto object-cover"
+                className="w-32 h-32 rounded-full mx-auto object-cover"
                 src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FJimmyZea.jpeg?alt=media&token=12f12f9b-f0f1-4a28-ad24-709d80821beb"
                 alt="Jimmy featured Img"
               />
-              <p className="font-semibold text-xl leading-5 text-gray-800 mt-4">
+              <p className="font-semibold text-base leading-5 text-gray-800 mt-4">
                 Jimmy Zea
               </p>
               <p className="font-normal text-base leading-6 text-gray-600">
-                <a href="mailto:yessidduarte7@gmail.com">
-                  Correo:yessidduarte7@gmail.com
+                <a href="mailto:jimmy26.dev@gmail.com">
+                  jimmy26.dev@gmail.com
+                </a>
+              </p>
+            </div>
+            <div className="p-2 pb-6 text-center">
+              <img
+                className="w-32 h-32 rounded-full mx-auto object-cover"
+                src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/image_resource%2Fyesika.jpg?alt=media&token=67b14043-49c5-4a26-8aee-5bbc189b7182"
+                alt="Yesika featured Img"
+              />
+              <p className="font-semibold text-base leading-5 text-gray-800 mt-4">
+                Yesika Rojas
+              </p>
+              <p className="font-normal text-base leading-6 text-gray-600">
+                <a href="mailto:yesika.rojas@uptc.edu.co ">
+                  yesika.rojas@uptc.edu.co 
                 </a>
               </p>
             </div>

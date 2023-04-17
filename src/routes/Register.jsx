@@ -72,9 +72,9 @@ const Register = () => {
 						Registrate
 					</h2>
 					<p className="mt-2 text-center text-sm text-gray-600">
-						O{" "}
+						ó{" "}
 						<NavLink to="/login">
-							<span className="font-medium text-amber-500 hover:text-amber-400">Iniciar sesión</span>
+							<span className="font-medium text-amber-500 hover:text-amber-400">inicia sesión</span>
 						</NavLink>
 					</p>
 				</div>

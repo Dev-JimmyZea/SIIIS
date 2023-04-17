@@ -21,7 +21,7 @@ import RequireAuth from "./components/RequireAuth";
 import LayoutContainerForm from "./components/LayoutContainerForm";
 import RequireAuthAdmin from "./components/RequireAuthAdmin";
 import ForgotPassword from "./components/ForgotPassword";
-import ContacUs from "./components/contactUs";
+import ContacUs from "./components/ContactUs";
 
 // page index
 const App = () => {

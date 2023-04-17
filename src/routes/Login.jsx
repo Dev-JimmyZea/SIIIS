@@ -68,7 +68,7 @@ const Login = () => {
             Inicia sesión
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            O{" "}
+            ó{" "}
             <NavLink to="/register">
               <span className="text-amber-500 hover:text-amber-400">
                 registrate
