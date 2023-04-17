@@ -82,7 +82,7 @@ const AboutUs = () => {
             <div className="p-2 pb-6 text-center">
               <img
                 className="w-32 h-32 rounded-full mx-auto object-cover"
-                src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/image_resource%2Fyesika.jpg?alt=media&token=67b14043-49c5-4a26-8aee-5bbc189b7182"
+                src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/image_resource%2Fyesika.jpeg?alt=media&token=498313a4-c5d0-46ff-827e-62cd2bf95cbf"
                 alt="Yesika featured Img"
               />
               <p className="font-semibold text-base leading-5 text-gray-800 mt-4">
